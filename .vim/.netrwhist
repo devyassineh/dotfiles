@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =9
+let g:netrw_dirhist_9='/home/yh/github.com/yassinehaddoudi/c-examples/hello_world'
+let g:netrw_dirhist_8='/home/yh/github.com/yassinehaddoudi'
+let g:netrw_dirhist_7='/home/yh/.local/share'
+let g:netrw_dirhist_6='/home/yh/.local'
+let g:netrw_dirhist_5='/home/yh'
+let g:netrw_dirhist_4='/home/yh/github.com/yassinehaddoudi/c-examples/hello_world'
+let g:netrw_dirhist_3='/home/yh'
+let g:netrw_dirhist_2='/home/yh/github.com/yassinehaddoudi/c-examples/hello_world'
+let g:netrw_dirhist_1='/home/yh/github.com/yassinehaddoudi'
+let g:netrw_dirhist_0='/home/yh/github.com/yassinehaddoudi/go-examples/hello_world'
