@@ -31,18 +31,13 @@ set smartindent
 set autoindent
 set showmatch
 set hidden
+set autowrite
 set backspace=indent,eol,start
-set clipboard=unnamedplus
+set clipboard+=unnamed
 colorscheme onedark
 
 let mapleader=" "
 let g:fzf_preview_window = ['right:50%', 'ctrl-/'] 
-
-" keybindings general
-map <C-d> <C-d>zz
-map <C-u> <C-u>zz
-vnoremap J :m+1<CR>gv=gv
-vnoremap K :m-2<CR>gv=gv
 
 " keybindings leader + plugins
 map <leader>n :set number!<CR>
@@ -51,12 +46,30 @@ map <leader>sf :Files<CR>
 map <leader>st :Rg<CR>
 map <leader>sb :Buffers<CR>
 map <leader>e :Explore<CR>
-map K :LspHover<CR>
-map gd :LspDefinition<CR>
-map <leader>ca :LspCodeAction<CR>
+map <leader>h :cd ~/github.com/yassinehaddoudi<CR>
 
-" filetype specifiy settings
+
+" vim-go settings
+let g:go_doc_keywordprg_enabled = 0
 autocmd FileType go autocmd BufWritePre <buffer> GoImports
-autocmd FileType go map K :GoDoc<CR>
-autocmd FileType vim setlocal commentstring="
-autocmd FileType c unmap K
+autocmd FileType go map <leader>d  :GoDoc<CR>
+
+" vim-commentary settings
+autocmd FileType vim setlocal commentstring=\"\ %s
+
+" keybindings general
+map <C-d> <C-d>zz
+map <C-u> <C-u>zz
+vnoremap K :m-2<CR>gv=gv
+vnoremap J :m'>+<CR>gv=gv
+
+" vim-lsc settings
+" let g:lsc_server_commands = {'c': 'clangd', 'go': 'gopls'}
+" let g:lsc_auto_map = v:true
+" set completeopt-=preview
+" set shortmess-=F
+
+"vim-lsp config
+nnoremap gd :LspDefinition<CR>
+nnoremap <leader>ca :LspCodeAction<CR>
+nnoremap K :LspHover<CR>
