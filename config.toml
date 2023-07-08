@@ -1,0 +1,14 @@
+theme = "onedark"
+
+[editor]
+line-number = "relative"
+
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[keys.normal]
+K = ["extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before"]
+J = ["extend_to_line_bounds", "delete_selection", "paste_after"]
