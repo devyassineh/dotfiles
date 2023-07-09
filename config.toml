@@ -4,6 +4,7 @@ theme = "onedark"
 line-number = "relative"
 bufferline = "multiple"
 mouse = false
+shell = ["alacritty"]
 
 [editor.cursor-shape]
 insert = "bar"
@@ -14,7 +15,6 @@ select = "underline"
 display-messages = true
 display-inlay-hints = true
 auto-signature-help = true
-
 
 [keys.normal]
 X = ["extend_line_above"]
