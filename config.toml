@@ -20,3 +20,5 @@ X = ["extend_line_above"]
 J = ["extend_to_line_bounds", "delete_selection", "paste_after"]
 K = ["extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before"]
 esc = ["collapse_selection", "keep_primary_selection"]
+"C-A-[" = { d = "goto_prev_diag", D = "goto_first_diag", f = "goto_prev_function", c = "goto_prev_comment", a = "goto_prev_parameter", t = "goto_prev_class", p = "goto_prev_paragraph", T = "goto_prev_test", g = "goto_prev_change", G = "goto_first_change", space = "add_newline_above" }
+"C-A-]" = { d = "goto_next_diag", D = "goto_last_diag", f = "goto_next_function", c = "goto_next_comment", a = "goto_next_parameter", t = "goto_next_class", p = "goto_next_paragraph", T = "goto_next_test", g = "goto_next_change", G = "goto_last_change", space = "add_newline_below" }
