@@ -103,7 +103,7 @@ require('lazy').setup({
     priority = 1000,
     config = function()
       vim.cmd.colorscheme 'vscode'
-      vim.o.background = 'light'
+      vim.o.background = 'dark'
     end,
   },
 
@@ -114,7 +114,6 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
         component_separators = '|',
         section_separators = '',
         theme = 'vscode',
