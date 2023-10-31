@@ -17,11 +17,13 @@
 	a = add
 	ap = add -p
 	c = commit
+<<<<<<< HEAD
 	ca = commit --amend
 	ck = checkout
 	cm = commit -m	
 	d = diff
 	ds = diff --staged
+<<<<<<< HEAD
 	l = log
 	ll = log --oneline
 	r = restore
