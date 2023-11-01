@@ -16,14 +16,15 @@
 [alias]
 	a = add
 	ap = add -p
+	b = branch
+	br = branch -r
+	bl = branch -l
 	c = commit
-<<<<<<< HEAD
 	ca = commit --amend
 	ck = checkout
 	cm = commit -m	
 	d = diff
 	ds = diff --staged
-<<<<<<< HEAD
 	l = log
 	ll = log --oneline
 	r = restore
@@ -31,3 +32,4 @@
 	s = status
 	sh = show
 	ss = status -s
+	sw = switch
