@@ -173,3 +173,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- windows specific settings
+if vim.fn.has('windows') then
+  vim.cmd [[set shell=powershell]]
+end
+
+
