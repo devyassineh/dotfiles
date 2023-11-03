@@ -42,15 +42,7 @@ require("lazy").setup({
 		  },
 		},
 	},
-	{ 
-		--'folke/which-key.nvim',  
-		-- config = function()
-		-- 	require('which-key').register {
-		-- 		['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-		-- 	}
-		-- end
-	},
-
+	
 	-- Editor
 	{ 'numToStr/Comment.nvim', opts = {} },
 	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
@@ -85,8 +77,7 @@ require("lazy").setup({
 					 buffer = bufnr,
 					 exclude = {'gs', 'gl', '<F2>', '<F4>'},
 				 })
-				 -- if client.server_capabilities.documentFormattingProvider then
-				 -- end
+				 lsp_zero.buffer_autoformat() 
 				 vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
 				 vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)		 
 				 vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
@@ -105,9 +96,11 @@ require("lazy").setup({
 				 ensure_installed = {'clangd', 'gopls', 'tsserver', 'rust_analyzer','marksman'},
 				 handlers = {
 					 lsp_zero.default_setup,
-					 lua_ls = function()
-						 local lua_opts = lsp_zero.nvim_lua_ls()
-						 require('lspconfig').lua_ls.setup(lua_opts)
+					 gopls = function()
+						 local lspconfig = require('lspconfig')
+						 lspconfig.gopls.setup {
+							root_dir = lspconfig.util.root_pattern('go.mod','go.work','.git'),
+						 }
 					 end,
 				 }
 			 })
@@ -123,14 +116,34 @@ require("lazy").setup({
 	-- Autocompletion
 	{
 		'hrsh7th/nvim-cmp',
-		event = "InsertEnter",
 		dependencies = {
 		  'L3MON4D3/LuaSnip',
 		  'saadparwaiz1/cmp_luasnip',
 		  'hrsh7th/cmp-nvim-lsp',
-		  "hrsh7th/cmp-buffer",
 		  'rafamadriz/friendly-snippets',
 		},
+		config = function()
+			local cmp = require('cmp')
+			local cmp_action = require('lsp-zero').cmp_action()
+			require('luasnip.loaders.from_vscode').lazy_load()
+			cmp.setup({
+				preselect = 'item',
+				completion = {
+					completeopt = 'menu,menuone,noinsert',
+				},
+				sources = {
+					{name = 'nvim_lsp'},
+					{name = 'luasnip'},
+				},
+				mapping = cmp.mapping.preset.insert({
+					-- ['<Tab>'] = cmp_action.luasnip_jump_forward(),
+					-- ['<S-Tab>'] = cmp_action.luasnip_jump_backward(),
+					['<Tab>'] = cmp_action.tab_complete(),
+					['<S-Tab>'] = cmp_action.select_prev_or_fallback(),
+					['<CR>'] = cmp.mapping.confirm({select = true}),
+				})
+			})
+		end,
 	},
 
 	-- Treesitter: Highlight, Folding
@@ -151,7 +164,6 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 vim.o.updatetime = 250
-vim.o.completeopt = 'menuone,noselect'
 vim.o.termguicolors = true
 vim.o.wrap = true
 -- vim.o.nowrap = true
