@@ -51,18 +51,19 @@ require("lazy").setup({
 	-- Fuzzy Find
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.3',
-		dependencies = {'nvim-lua/plenary.nvim'},
-		config = function()
-		  require('telescope').setup({}) 
-		end,
-		keys = {
-			{"<leader><leader>", "<cmd>Telescope buffers<CR>", "n", desc="Find Open Buffers"},
-			{"<leader>?", "<cmd>Telescope oldfiles<CR>", "n", desc="Find Old Files"},
-			{"<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>", "n",desc = "Find Current Buffer" },
-			{"<leader>f","<cmd>Telescope find_files<CR>","n",desc="Find Files"},
-			{"<leader>m","<cmd>Telescope marks<CR>","n",desc="Marks"},
-			{"<leader>p", "<cmd>Telescope registers<CR>", "n",desc="Paste from Register"},
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			{'nvim-telescope/telescope-fzf-native.nvim', build = 'make'}
 		},
+		config = function()
+			require('telescope').setup({}) 
+			vim.keymap.set("n","<leader><leader>", "<cmd>Telescope buffers<CR>")
+			vim.keymap.set("n","<leader>?", "<cmd>Telescope oldfiles<CR>")
+			vim.keymap.set("n","<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
+			vim.keymap.set("n","<leader>f","<cmd>Telescope find_files<CR>")
+			vim.keymap.set("n","<leader>m","<cmd>Telescope marks<CR>")
+			vim.keymap.set("n","<leader>p", "<cmd>Telescope registers<CR>")
+		end,
 	},
 
 	-- Lsp
@@ -82,13 +83,6 @@ require("lazy").setup({
 				 vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)		 
 				 vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 				 vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-				 vim.api.nvim_create_autocmd("BufWritePre", {
-					 group = augroup,
-					 buffer = bufnr,
-					 callback = function()
-						 vim.lsp.buf.format()
-					 end,
-				 })
 			 end)
 
 			 require('mason').setup({})
