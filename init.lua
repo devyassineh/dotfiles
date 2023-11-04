@@ -175,8 +175,7 @@ vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 vim.o.updatetime = 250
 vim.o.termguicolors = true
-vim.o.wrap = true
--- vim.o.nowrap = true
+vim.o.nowrap = true
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('t', '<Esc><Esc>', '<c-\\><c-n>')
 vim.keymap.set('n', '<M-h>', '<C-W>h')
