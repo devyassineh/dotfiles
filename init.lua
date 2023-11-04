@@ -42,7 +42,23 @@ require("lazy").setup({
 		  },
 		},
 	},
-	
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		config = function ()
+			require('noice').setup({})
+			vim.keymap.set("c","<S-Enter>", "<cmd>lua  require('noice').redirect(vim.fn.getcmdline()) <CR>")
+			vim.keymap.set("n","<leader>nl", "<cmd>lua  require('noice').cmd('last') <CR>")
+			vim.keymap.set("n","<leader>nh", "<cmd>lua  require('noice').cmd('history') <CR>")
+			vim.keymap.set("n","<leader>na", "<cmd>lua  require('noice').cmd('all') <CR>")
+			vim.keymap.set("n","<leader>nd", "<cmd>lua  require('noice').cmd('dismiss') <CR>")
+		end,
+	},
+
 	-- Editor
 	{ 'numToStr/Comment.nvim', opts = {} },
 	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
