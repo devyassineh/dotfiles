@@ -37,5 +37,6 @@ $(PWSHCONFIG): Microsoft.PowerShell_profile.ps1
 	$(CP) ./Microsoft.PowerShell_profile.ps1 $(PWSHCONFIG)
 	. $$profile
 
-patch:
-	diff  ./init.lua $(NVIMCONFIG)/init.lua 
+update:
+	rm  ./init.lua 
+	cp $(NVIMCONFIG)/init.lua ./init.lua
