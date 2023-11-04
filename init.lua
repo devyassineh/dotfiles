@@ -185,6 +185,7 @@ vim.keymap.set("n",'<M-k>', "<C-W>k")
 vim.keymap.set("n",'<M-l>', "<C-W>l")
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set('n','gp','`[v`]')
 
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
