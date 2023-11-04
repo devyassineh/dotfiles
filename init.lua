@@ -139,17 +139,15 @@ require("lazy").setup({
 			cmp.setup({
 				preselect = 'item',
 				completion = {
-					completeopt = 'menu,menuone,noinsert',
+					completeopt = 'menu,noselect',
 				},
 				sources = {
-					{name = 'nvim_lsp'},
 					{name = 'luasnip'},
+					{name = 'nvim_lsp'},
 				},
 				mapping = cmp.mapping.preset.insert({
-					-- ['<Tab>'] = cmp_action.luasnip_jump_forward(),
-					-- ['<S-Tab>'] = cmp_action.luasnip_jump_backward(),
-					['<Tab>'] = cmp_action.tab_complete(),
-					['<S-Tab>'] = cmp_action.select_prev_or_fallback(),
+					['<Tab>'] = cmp_action.luasnip_jump_forward(),
+					['<S-Tab>'] = cmp_action.luasnip_jump_backward(),
 					['<CR>'] = cmp.mapping.confirm({select = true}),
 				})
 			})
@@ -157,16 +155,43 @@ require("lazy").setup({
 	},
 
 	-- Treesitter: Highlight, Folding
-	{'nvim-treesitter/nvim-treesitter'},
-	{'nvim-treesitter/nvim-treesitter-textobjects'},
-
+	{
+		'nvim-treesitter/nvim-treesitter',
+		dependencies = {
+			'nvim-treesitter/nvim-treesitter-textobjects',
+		},
+		build = ':TSUpdate',
+		config = function ()
+			require('nvim-treesitter.configs').setup({
+				ensure_installed = {'lua','go','rust','markdown','javascript','c'},
+				auto_install = false,
+				highlight = {enable = true,},
+				indent = { enable = true },
+				textobjects = {
+					select = {
+						enable = true,
+						lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["aa"] = "@parameter.outer",
+							["ia"] = "@parameter.inner",
+						},
+					},
+				},
+			})
+		end	
+	},
 })
 
 -- General Settings
 vim.o.hlsearch = false
 vim.o.number = true
 vim.o.relativenumber = true
+vim.o.cursorline = true
 vim.o.mouse = 'a'
+vim.o.termguicolors = true
+vim.o.nowrap = true
 vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -174,8 +199,6 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 vim.o.updatetime = 250
-vim.o.termguicolors = true
-vim.o.nowrap = true
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('t', '<Esc><Esc>', '<c-\\><c-n>')
 vim.keymap.set('n', '<M-h>', '<C-W>h')
