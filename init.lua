@@ -99,6 +99,7 @@ require("lazy").setup({
 				 vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)		 
 				 vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 				 vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+				 vim.keymap.set('n', '<leader>d', vim.diagnostic.setloclist, {noremap=true, silent=true})
 			 end)
 
 			 require('mason').setup({})
@@ -123,7 +124,7 @@ require("lazy").setup({
 		},
 	},
 
-	-- Autocompletion
+	-- Autocompletion: Lsp, Snippets
 	{
 		'hrsh7th/nvim-cmp',
 		dependencies = {
@@ -154,7 +155,7 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Treesitter: Highlight, Folding
+	-- Treesitter: Highlight, Indent, Textobjects
 	{
 		'nvim-treesitter/nvim-treesitter',
 		dependencies = {
