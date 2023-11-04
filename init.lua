@@ -47,7 +47,7 @@ require("lazy").setup({
 		event = "VeryLazy",
 		dependencies = {
 			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
+			-- "rcarriga/nvim-notify",
 		},
 		config = function ()
 			require('noice').setup({})
@@ -109,7 +109,7 @@ require("lazy").setup({
 					 gopls = function()
 						 local lspconfig = require('lspconfig')
 						 lspconfig.gopls.setup {
-							root_dir = lspconfig.util.root_pattern('go.mod','go.work','.git'),
+							root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git"),
 						 }
 					 end,
 				 }
