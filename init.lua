@@ -24,6 +24,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
 	-- UI
+	--
 	{
 		'Mofiqul/vscode.nvim',
 		priority = 1000,

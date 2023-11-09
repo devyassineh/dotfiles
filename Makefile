@@ -44,6 +44,7 @@ clean:
 	$(RM) $(NVIMCONFIG)
 	$(RM) $(TERMCONFIG)
 
+
 windows:
 	$(RM) $(PWSHCONFIG)
 	$(CP) ./Microsoft.PowerShell_profile.ps1 $(PWSHCONFIG)
