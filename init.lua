@@ -235,7 +235,6 @@ vim.o.relativenumber = true
 vim.o.cursorline = true
 vim.o.mouse = 'a'
 vim.o.termguicolors = true
-vim.o.nowrap = true
 vim.o.breakindent = true
 vim.o.undofile = true
 vim.o.ignorecase = true
