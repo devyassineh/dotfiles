@@ -6,7 +6,6 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Plugin Manager
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
--- Auto-install lazy.nvim if not present
 if not vim.loop.fs_stat(lazypath) then
   print('Installing lazy.nvim....')
   vim.fn.system({
@@ -23,8 +22,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugins
 require("lazy").setup({
-	-- UI
-	--
+	-- Appearance
 	{
 		'Mofiqul/vscode.nvim',
 		priority = 1000,
@@ -44,17 +42,34 @@ require("lazy").setup({
 		  },
 		},
 	},
+
+	-- File Explorer: Works like a Buffer, ~=cwd, -= go up dir
+	{
+		'stevearc/oil.nvim',
+		opts = {},
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("oil").setup()
+			vim.keymap.set("n","<leader>e","<cmd>Oil<CR>")
+		end,
+	},
+
+	-- Quick Navigation: per project-based Marks, Terminal, Commands
 	{
 		'ThePrimeagen/harpoon',
 		dependencies = {
 			'nvim-lua/plenary.nvim'
 		},
 		config = function()
-			vim.keymap.set("n","<leader>ht","<cmd>lua require('harpoon.term').gotoTerminal(1)<CR>")
+			vim.keymap.set("n","<leader>ht", function() 
+				require('harpoon.term').sendCommand(1,"cd ".. vim.fn.getcwd() .."\r")
+				require('harpoon.term').gotoTerminal(1) 
+			end)
 			vim.keymap.set("n", "<leader>hc", "<cmd>lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>")
 			vim.keymap.set("n", "<leader>hs", "<cmd>lua require('harpoon.term').sendCommand(1,1)<CR>")
 			vim.keymap.set("n", "<leader>hd", "<cmd>lua require('harpoon.term').sendCommand(1,2)<CR>")
 			vim.keymap.set("n", "<leader>hf", "<cmd>lua require('harpoon.term').sendCommand(1,3)<CR>")
+			vim.keymap.set("n", "<leader>hg", "<cmd>lua require('harpoon.term').sendCommand(1,4)<CR>")
 			vim.keymap.set("n","<leader>hm","<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>")
 			vim.keymap.set("n","<leader>ha","<cmd>lua require('harpoon.mark').add_file()<CR>")
 			vim.keymap.set("n","<leader>hh","<cmd>lua require('harpoon.ui').nav_file(1)<CR>")
@@ -64,21 +79,11 @@ require("lazy").setup({
 		end,
 	},
 	
-	-- Editor
+	-- Editor: Comment/Uncomment, Autopairs: {}()[]""
 	{ 'numToStr/Comment.nvim', opts = {} },
 	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
-	{
-		'ThePrimeagen/refactoring.nvim',
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		config = function()
-			require("refactoring").setup()
-		end,
-	},
 
-	-- Fuzzy Find
+	-- Fuzzy Find: Files, Old Files, Buffers, Current Buffer Search, Lsp Search
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.3',
 		dependencies = {
@@ -92,11 +97,10 @@ require("lazy").setup({
 			vim.keymap.set("n","<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
 			vim.keymap.set("n","<leader>f","<cmd>Telescope find_files<CR>")
 			vim.keymap.set("n","<leader>l","<cmd>Telescope lsp_document_symbols<CR>")
-			vim.keymap.set("n","<leader>p", "<cmd>Telescope registers<CR>")
 		end,
 	},
 
-	-- Lsp
+	-- Lsp: Code Format, Code Reference/Definition, Code Actions, Documentation, Diagnositcs
 	{
 		'VonHeikemen/lsp-zero.nvim', 
 		branch = 'v3.x',
@@ -106,20 +110,21 @@ require("lazy").setup({
 				 local opts = {buffer = bufnr, remap = false}
 				 lsp_zero.default_keymaps({
 					 buffer = bufnr,
-					 exclude = {'gs', 'gl', '<F2>', '<F4>'},
+					 exclude = {'gs', 'gl', '<F2>', '<F3>','<F4>'},
 				 })
 				 lsp_zero.buffer_autoformat() 
 				 vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
 				 vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)		 
-				 vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+			         vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 				 vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+				vim.keymap.set('n', '<leader>dd', vim.diagnostic.setloclist, {noremap=true, silent=true})
 				 vim.keymap.set('n', '<leader>dn', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
 				 vim.keymap.set('n', '<leader>dp', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
 			 end)
 
 			 require('mason').setup({})
 			 require('mason-lspconfig').setup({
-				 ensure_installed = {'clangd', 'gopls', 'tsserver', 'rust_analyzer','marksman'},
+				 ensure_installed = {'gopls', 'tsserver', 'rust_analyzer','marksman'},
 				 handlers = {
 					 lsp_zero.default_setup,
 					 gopls = function()
@@ -139,7 +144,7 @@ require("lazy").setup({
 		},
 	},
 
-	-- Autocompletion: Lsp, Snippets
+	-- Autocompletion: Lsp, Snippets, Buffer
 	{
 		'hrsh7th/nvim-cmp',
 		dependencies = {
@@ -193,22 +198,20 @@ require("lazy").setup({
 						enable = true,
 						lookahead = true,
 						keymaps = {
-							["of"] = "@function.outer",
+							["af"] = "@function.outer",
 							["if"] = "@function.inner",
-							["oa"] = "@parameter.outer",
-							["ia"] = "@parameter.inner",
-							["il"] = "@assignment.lhs",
-							["ir"] = "@assignment.rhs",
-							["A"] = "@assignment.outer",
+							["ap"] = "@parameter.outer",
+							["ip"] = "@parameter.inner",
+							["al"] = "@assignment.lhs",
+							["ar"] = "@assignment.rhs",
+							["aa"] = "@assignment.outer",
 						},
 					},
 					lsp_interop = {
 						enable = true,
-						border = 'none',
-						floating_preview_opts = {},
 						peek_definition_code = {
-							["<leader>pc"] = "@function.outer",
-							["<leader>pC"] = "@class.outer",
+							["<leader>pk"] = "@function.outer",
+							["<leader>pK"] = "@class.outer",
 						},
 					},
 					swap = {
@@ -229,6 +232,7 @@ require("lazy").setup({
 })
 
 -- General
+vim.o.wrap = true
 vim.o.hlsearch = false
 vim.o.number = true
 vim.o.relativenumber = true
@@ -241,17 +245,15 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 vim.o.updatetime = 250
-vim.keymap.set('t', '<Esc><Esc>', '<c-\\><c-n>') -- terminal escape
 vim.keymap.set('n', '<leader>w', '<C-W>') -- window movement: <leader>w instead of <C-w>
 vim.keymap.set("n","<C-d>", "<C-d>zz") -- better scrolling
 vim.keymap.set("n","<C-u>", "<C-u>zz")
 vim.keymap.set('n','gp','`[v`]') -- select last modification
--- vim.o.clipboard = 'unnamedplus'
--- vim.o.wrap = true
--- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
--- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
--- Highlight yank/copy
+vim.o.clipboard = 'unnamedplus'
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- Highlight yank/copy
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
@@ -261,7 +263,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- Windows settings: powershell
-if vim.fn.has('windows') then
+-- Terminal settings
+vim.cmd [[tnoremap <Esc> <C-\><C-n>]]
+if vim.loop.os_uname().sysname == 'Windows' then
   vim.cmd [[set shell=powershell]]
 end
+
