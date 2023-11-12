@@ -3,3 +3,6 @@ font:
     family: JetBrainsMono Nerd Font
     style: Regular
   size: 14.0
+
+mouse:
+    hide_when_typing: true
