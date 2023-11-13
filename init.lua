@@ -28,7 +28,7 @@ require("lazy").setup({
 		priority = 1000,
 		config = function()
 		  vim.cmd.colorscheme 'vscode'
-		  vim.o.background = 'dark'
+		  vim.o.background = 'light'
 		end,
 	},
 	{
@@ -46,10 +46,18 @@ require("lazy").setup({
 	-- File Explorer: Works like a Buffer, ~=cwd, -= go up dir
 	{
 		'stevearc/oil.nvim',
-		opts = {},
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("oil").setup()
+		opts = {
+			keymaps = {
+				["~"] = function()
+					require("oil.actions").tcd.callback()
+					require('harpoon.term').sendCommand(1,"cd ".. vim.fn.getcwd() .."\r")
+					require('harpoon.term').sendCommand(1,"")
+				end,
+			},
+		},
+		config = function(_,opts)
+			require("oil").setup(opts)
 			vim.keymap.set("n","<leader>e","<cmd>Oil<CR>")
 		end,
 	},
@@ -62,7 +70,6 @@ require("lazy").setup({
 		},
 		config = function()
 			vim.keymap.set("n","<leader>ht", function() 
-				require('harpoon.term').sendCommand(1,"cd ".. vim.fn.getcwd() .."\r")
 				require('harpoon.term').gotoTerminal(1) 
 			end)
 			vim.keymap.set("n", "<leader>hc", "<cmd>lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>")
@@ -110,7 +117,7 @@ require("lazy").setup({
 				 local opts = {buffer = bufnr, remap = false}
 				 lsp_zero.default_keymaps({
 					 buffer = bufnr,
-					 exclude = {'gs', 'gl', '<F2>', '<F3>','<F4>'},
+					 exclude = {'gi','<F2>', '<F3>','<F4>'},
 				 })
 				 lsp_zero.buffer_autoformat() 
 				 vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
@@ -164,7 +171,7 @@ require("lazy").setup({
 					completeopt = 'menu,noselect',
 				},
 				view = {            
-					entries = "wildmenu" -- can be "custom", "wildmenu" or "native"
+					entries = "native" -- can be "custom", "wildmenu" or "native"
 				},
 				sources = {
 					{name = 'luasnip'},
