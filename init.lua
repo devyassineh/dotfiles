@@ -163,12 +163,19 @@ require("lazy").setup({
 		},
 		config = function()
 			local cmp = require('cmp')
+			local luasnip = require('luasnip')
 			local cmp_action = require('lsp-zero').cmp_action()
 			require('luasnip.loaders.from_vscode').lazy_load()
+			luasnip.config.setup({})
 			cmp.setup({
-				preselect = cmp.PreselectMode.None,
+				preselect = cmp.PreselectMode.None, -- for golang 
+				snippet = {
+					expand = function(args)
+						luasnip.lsp_expand(args.body)
+					end,
+				},
 				completion = {
-					completeopt = 'menu,noselect',
+					completeopt = 'menuone,noselect', -- noselect is without documentation, menuone pops of autocomplete early
 				},
 				view = {            
 					entries = "native" -- can be "custom", "wildmenu" or "native"
@@ -179,9 +186,31 @@ require("lazy").setup({
 					{name = 'buffer'},
 				},
 				mapping = cmp.mapping.preset.insert({
-					['<Tab>'] = cmp_action.luasnip_jump_forward(),
-					['<S-Tab>'] = cmp_action.luasnip_jump_backward(),
-					['<CR>'] = cmp.mapping.confirm({select = true}),
+					['<C-n>'] = cmp.mapping.select_next_item(),
+					['<C-p>'] = cmp.mapping.select_prev_item(),
+					['<C-Space>'] = cmp.mapping.complete {},
+					['<CR>'] = cmp.mapping.confirm({
+						behavior = cmp.ConfirmBehavior.Replace,
+						select = true,
+					}),
+					['<Tab>'] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_locally_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback()
+						end
+					end, { 'i', 's' }),
+					['<S-Tab>'] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.locally_jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { 'i', 's' }),
 				})
 			})
 		end,
