@@ -27,8 +27,15 @@ require("lazy").setup({
 		'Mofiqul/vscode.nvim',
 		priority = 1000,
 		config = function()
-		  vim.cmd.colorscheme 'vscode'
-		  vim.o.background = 'light'
+			vim.cmd.colorscheme 'vscode'
+			vim.o.background = 'light'
+			vim.keymap.set("n", "<leader>v", function() 
+				if vim.o.background == 'light' then
+					vim.o.background = 'dark'
+				else
+					vim.o.background = 'light'
+				end
+			end)
 		end,
 	},
 	{
