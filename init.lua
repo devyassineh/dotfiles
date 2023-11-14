@@ -28,7 +28,7 @@ require("lazy").setup({
 		priority = 1000,
 		config = function()
 			vim.cmd.colorscheme 'vscode'
-			vim.o.background = 'light'
+			vim.o.background = 'dark'
 			vim.keymap.set("n", "<leader>v", function() 
 				if vim.o.background == 'light' then
 					vim.o.background = 'dark'
@@ -106,11 +106,11 @@ require("lazy").setup({
 		},
 		config = function()
 			require('telescope').setup({}) 
-			vim.keymap.set("n","<leader><leader>", "<cmd>Telescope buffers<CR>")
-			vim.keymap.set("n","<leader>?", "<cmd>Telescope oldfiles<CR>")
-			vim.keymap.set("n","<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
-			vim.keymap.set("n","<leader>f","<cmd>Telescope find_files<CR>")
-			vim.keymap.set("n","<leader>l","<cmd>Telescope lsp_document_symbols<CR>")
+			vim.keymap.set("n","<leader>fb", "<cmd>Telescope buffers<CR>")
+			vim.keymap.set("n","<leader>fo", "<cmd>Telescope oldfiles<CR>")
+			vim.keymap.set("n","<leader>fg", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
+			vim.keymap.set("n","<leader>ff","<cmd>Telescope find_files<CR>")
+			vim.keymap.set("n","<leader>fl","<cmd>Telescope lsp_document_symbols<CR>")
 		end,
 	},
 
@@ -126,15 +126,14 @@ require("lazy").setup({
 					 buffer = bufnr,
 					 exclude = {'gi','<F2>', '<F3>','<F4>'},
 				 })
-				 lsp_zero.buffer_autoformat() 
-				 vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
-				 vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)		 
-			         vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-				 vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+				lsp_zero.buffer_autoformat() 
+				vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
+				vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+				vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 				vim.keymap.set('n', '<leader>dd', vim.diagnostic.setloclist, {noremap=true, silent=true})
-				 vim.keymap.set('n', '<leader>dn', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
-				 vim.keymap.set('n', '<leader>dp', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
-			 end)
+				vim.keymap.set('n', '<leader>dn', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
+				vim.keymap.set('n', '<leader>dp', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
+			end)
 
 			 require('mason').setup({})
 			 require('mason-lspconfig').setup({
@@ -253,19 +252,8 @@ require("lazy").setup({
 					lsp_interop = {
 						enable = true,
 						peek_definition_code = {
-							["<leader>pk"] = "@function.outer",
-							["<leader>pK"] = "@class.outer",
-						},
-					},
-					swap = {
-						enable = true,
-						swap_next = {
-							["<leader>sp"] = "@parameter.inner",
-							["<leader>sa"] = "@assignment.inner",
-						},
-						swap_previous = {
-							["<leader>sP"] = "@parameter.inner",
-							["<leader>sA"] = "@assignment.inner",
+							["<leader>tp"] = "@function.outer",
+							["<leader>tP"] = "@class.outer",
 						},
 					},
 				},
@@ -281,6 +269,7 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.cursorline = true
 vim.o.mouse = 'a'
+vim.o.clipboard = 'unnamedplus'
 vim.o.termguicolors = true
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -292,7 +281,6 @@ vim.keymap.set('n', '<leader>w', '<C-W>') -- window movement: <leader>w instead 
 vim.keymap.set("n","<C-d>", "<C-d>zz") -- better scrolling
 vim.keymap.set("n","<C-u>", "<C-u>zz")
 vim.keymap.set('n','gp','`[v`]') -- select last modification
-vim.o.clipboard = 'unnamedplus'
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
