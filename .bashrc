@@ -120,3 +120,4 @@ fi
 alias g='git'
 alias python='python3'
 alias fd='fdfind'
+export PATH=$PATH:~/go/bin

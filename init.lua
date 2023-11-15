@@ -127,10 +127,11 @@ require("lazy").setup({
 					 exclude = {'gi','<F2>', '<F3>','<F4>'},
 				 })
 				lsp_zero.buffer_autoformat() 
-				vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
+				vim.keymap.set('i', '<C-s>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+				vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', opts) 
 				vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 				vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-				vim.keymap.set('n', '<leader>dd', vim.diagnostic.setloclist, {noremap=true, silent=true})
+				vim.keymap.set('n', '<leader>dd', vim.diagnostic.setloclist, opts)
 				vim.keymap.set('n', '<leader>dn', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
 				vim.keymap.set('n', '<leader>dp', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
 			end)
