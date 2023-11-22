@@ -120,4 +120,7 @@ fi
 alias g='git'
 alias python='python3'
 alias fd='fdfind'
-export PATH=$PATH:~/go/bin
+alias s='sudo'
+alias sd='sudo docker'
+export PATH=$PATH:~/go/bin:~/.local/bin
+alias mvim='NVIM_APPNAME=mvim nvim'

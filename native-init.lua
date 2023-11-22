@@ -1,5 +1,4 @@
 -- General
---
 vim.opt.mouse = "a"
 vim.opt.termguicolors = true
 vim.opt.nu = true
@@ -25,9 +24,6 @@ vim.cmd[[set grepformat=%f:%l:%c:%m]]
 
 -- Treesitter: Highlight & Folding
 -- https://github.com/nvim-treesitter/nvim-treesitter
-vim.wo.foldtext = "v:lua.vim.treesitter.foldtext()"
-vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.cmd[[set foldmethod=expr]]
 path = vim.fn.stdpath('data')..'/site/pack/nvim-treesitter/start/nvim-treesitter'
 if vim.fn.empty(vim.fn.glob(path)) > 0 then
 	vim.fn.system({'git', 'clone', 'https://github.com/nvim-treesitter/nvim-treesitter', path})
@@ -36,23 +32,6 @@ require('nvim-treesitter.configs').setup({
 	highlight = {enable = true,},
 	indent = { enable = true },
 	ensure_installed = {"go"},
-})
--- https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-path = vim.fn.stdpath('data')..'/site/pack/nvim-treesitter-textobjects/start/nvim-treesitter-textobjects'
-if vim.fn.empty(vim.fn.glob(path)) > 0 then
-	vim.fn.system({'git', 'clone', 'https://github.com/nvim-treesitter/nvim-treesitter-textobjects', path})
-end
-require('nvim-treesitter.configs').setup({
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true,
-      keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-      },
-    },
-  },
 })
 -- Lsp
 vim.api.nvim_create_autocmd('LspAttach', {

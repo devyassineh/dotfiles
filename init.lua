@@ -4,7 +4,6 @@ vim.g.maplocalleader = ' '
 vim.o.timeoutlen = 1000
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
--- Plugin Manager
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   print('Installing lazy.nvim....')
@@ -20,9 +19,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Plugins
 require("lazy").setup({
-	-- Appearance
 	{
 		'Mofiqul/vscode.nvim',
 		priority = 1000,
@@ -40,17 +37,16 @@ require("lazy").setup({
 	},
 	{
 		'nvim-lualine/lualine.nvim',
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {
 		  options = {
 			icons_enabled = false,
 			component_separators = '|',
 			section_separators = '',
-			theme = 'vscode',
+			theme = 'vscode'
 		  },
 		},
 	},
-
-	-- File Explorer: Works like a Buffer, ~=cwd, -= go up dir
 	{
 		'stevearc/oil.nvim',
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -68,17 +64,13 @@ require("lazy").setup({
 			vim.keymap.set("n","<leader>e","<cmd>Oil<CR>")
 		end,
 	},
-
-	-- Quick Navigation: per project-based Marks, Terminal, Commands
 	{
 		'ThePrimeagen/harpoon',
 		dependencies = {
 			'nvim-lua/plenary.nvim'
 		},
 		config = function()
-			vim.keymap.set("n","<leader>ht", function() 
-				require('harpoon.term').gotoTerminal(1) 
-			end)
+			vim.keymap.set("n","<leader>t", "<cmd>lua require('harpoon.term').gotoTerminal(1)<CR>")
 			vim.keymap.set("n", "<leader>hc", "<cmd>lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>")
 			vim.keymap.set("n", "<leader>hs", "<cmd>lua require('harpoon.term').sendCommand(1,1)<CR>")
 			vim.keymap.set("n", "<leader>hd", "<cmd>lua require('harpoon.term').sendCommand(1,2)<CR>")
@@ -92,109 +84,91 @@ require("lazy").setup({
 			vim.keymap.set("n","<leader>hl","<cmd>lua require('harpoon.ui').nav_file(4)<CR>")
 		end,
 	},
-	
-	-- Editor: Comment/Uncomment, Autopairs: {}()[]""
-	{ 'numToStr/Comment.nvim', opts = {} },
-	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
-
-	-- Fuzzy Find: Files, Old Files, Buffers, Current Buffer Search, Lsp Search
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.3',
 		dependencies = {
 			'nvim-lua/plenary.nvim',
-			{'nvim-telescope/telescope-fzf-native.nvim', build = 'make'}
 		},
 		config = function()
 			require('telescope').setup({}) 
-			vim.keymap.set("n","<leader>fb", "<cmd>Telescope buffers<CR>")
-			vim.keymap.set("n","<leader>fo", "<cmd>Telescope oldfiles<CR>")
-			vim.keymap.set("n","<leader>fg", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
-			vim.keymap.set("n","<leader>ff","<cmd>Telescope find_files<CR>")
-			vim.keymap.set("n","<leader>fl","<cmd>Telescope lsp_document_symbols<CR>")
+			vim.keymap.set("n","<leader>b", "<cmd>Telescope buffers<CR>")
+			vim.keymap.set("n","<leader>?", "<cmd>Telescope oldfiles<CR>")
+			vim.keymap.set("n","<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
+			vim.keymap.set("n","<leader>f","<cmd>Telescope find_files<CR>")
+			vim.keymap.set("n","<leader>l","<cmd>Telescope lsp_document_symbols<CR>")
 		end,
 	},
-
-	-- Lsp: Code Format, Code Reference/Definition, Code Actions, Documentation, Diagnositcs
+	{ 'numToStr/Comment.nvim', opts = {} },
+	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
 	{
-		'VonHeikemen/lsp-zero.nvim', 
-		branch = 'v3.x',
+		'neovim/nvim-lspconfig', 
 		config = function()
-			 local lsp_zero = require('lsp-zero')
-			 lsp_zero.on_attach(function(client, bufnr)
-				 local opts = {buffer = bufnr, remap = false}
-				 lsp_zero.default_keymaps({
-					 buffer = bufnr,
-					 exclude = {'gi','<F2>', '<F3>','<F4>'},
-				 })
-				lsp_zero.buffer_autoformat() 
-				vim.keymap.set('i', '<C-s>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-				vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', opts) 
-				vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-				vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-				vim.keymap.set('n', '<leader>dd', vim.diagnostic.setloclist, opts)
-				vim.keymap.set('n', '<leader>dn', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
-				vim.keymap.set('n', '<leader>dp', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
-			end)
-
-			 require('mason').setup({})
-			 require('mason-lspconfig').setup({
+			local lspconfig = require('lspconfig')
+			local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+			local default_setup = function(server)
+				lspconfig[server].setup({
+					capabilities = lsp_capabilities,
+				})
+			end
+			require('mason').setup({})
+			require('mason-lspconfig').setup({
 				 ensure_installed = {'gopls', 'tsserver', 'rust_analyzer','marksman'},
-				 handlers = {
-					 lsp_zero.default_setup,
-					 gopls = function()
-						 local lspconfig = require('lspconfig')
-						 lspconfig.gopls.setup {
-							root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git"),
-						 }
-					 end,
-				 }
+				 handlers = {default_setup,}
 			 })
+			vim.api.nvim_create_autocmd('LspAttach', {
+				callback = function(ev)
+					local opts = { buffer = ev.buf }
+					vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+					vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+					vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+					vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+					vim.keymap.set('n', 'gR', '<cmd>Telescope lsp_references<cr>', opts) 
+					vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+					vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+					vim.keymap.set({'i','s'}, '<C-s>', vim.lsp.buf.signature_help, opts)
+					vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+					vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+					vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+					vim.keymap.set('n', 'gl', "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+					vim.keymap.set('n', '[d', "<cmd>lua vim.diagnostic.goto_next()<CR>",opts)
+					vim.keymap.set('n', ']d', "<cmd>lua vim.diagnostic.goto_prev()<CR>",opts)
+			end,
+			})
+
+
 		end,
 		dependencies = {
 			{'williamboman/mason.nvim'},
 			{'williamboman/mason-lspconfig.nvim'},
-			{'neovim/nvim-lspconfig'},	
 			{ 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
 		},
 	},
-
-	-- Autocompletion: Lsp, Snippets, Buffer
 	{
 		'hrsh7th/nvim-cmp',
 		dependencies = {
-	          'hrsh7th/cmp-buffer',
-		  'saadparwaiz1/cmp_luasnip',
-		  'hrsh7th/cmp-nvim-lsp',
-		  'L3MON4D3/LuaSnip',
-		  'rafamadriz/friendly-snippets',
+			'hrsh7th/cmp-buffer',
+			'hrsh7th/cmp-nvim-lsp',
 		},
 		config = function()
 			local cmp = require('cmp')
-			local luasnip = require('luasnip')
-			local cmp_action = require('lsp-zero').cmp_action()
-			require('luasnip.loaders.from_vscode').lazy_load()
-			luasnip.config.setup({})
 			cmp.setup({
-				preselect = cmp.PreselectMode.None, -- for golang 
 				snippet = {
 					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
+						vim.snippet.expand(args.body)
+					end
 				},
+				preselect = cmp.PreselectMode.None, -- for golang 
 				completion = {
-					completeopt = 'menuone,noselect', -- noselect is without documentation, menuone pops of autocomplete early
+					completeopt = 'menuone,noselect',
 				},
 				view = {            
-					entries = "native" -- can be "custom", "wildmenu" or "native"
+					entries = "native",
 				},
 				sources = {
-					{name = 'luasnip'},
 					{name = 'nvim_lsp'},
 					{name = 'buffer'},
 				},
 				mapping = cmp.mapping.preset.insert({
-					['<C-n>'] = cmp.mapping.select_next_item(),
-					['<C-p>'] = cmp.mapping.select_prev_item(),
 					['<C-Space>'] = cmp.mapping.complete {},
 					['<CR>'] = cmp.mapping.confirm({
 						behavior = cmp.ConfirmBehavior.Replace,
@@ -203,67 +177,39 @@ require("lazy").setup({
 					['<Tab>'] = cmp.mapping(function(fallback)
 						if cmp.visible() then
 							cmp.select_next_item()
-						elseif luasnip.expand_or_locally_jumpable() then
-							luasnip.expand_or_jump()
+						elseif vim.snippet.jumpable(1) then
+							vim.snippet.jump(1)
 						else
 							fallback()
 						end
-					end, { 'i', 's' }),
+					end,{'i','s'}),
 					['<S-Tab>'] = cmp.mapping(function(fallback)
 						if cmp.visible() then
 							cmp.select_prev_item()
-						elseif luasnip.locally_jumpable(-1) then
-							luasnip.jump(-1)
+						elseif vim.snippet.jumpable(1) then
+							vim.snippet.jump(-1)
 						else
 							fallback()
 						end
-					end, { 'i', 's' }),
+					end,{'i','s'}),
 				})
 			})
 		end,
 	},
-
-	-- Treesitter: Highlight, Indent, Textobjects
 	{
 		'nvim-treesitter/nvim-treesitter',
-		dependencies = {
-			'nvim-treesitter/nvim-treesitter-textobjects',
-		},
 		build = ':TSUpdate',
 		config = function ()
 			require('nvim-treesitter.configs').setup({
 				ensure_installed = {'lua','go','rust','markdown','javascript','c'},
-				auto_install = false,
+				auto_install = true,
 				highlight = {enable = true,},
 				indent = { enable = true },
-				textobjects = {
-					select = {
-						enable = true,
-						lookahead = true,
-						keymaps = {
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["ap"] = "@parameter.outer",
-							["ip"] = "@parameter.inner",
-							["al"] = "@assignment.lhs",
-							["ar"] = "@assignment.rhs",
-							["aa"] = "@assignment.outer",
-						},
-					},
-					lsp_interop = {
-						enable = true,
-						peek_definition_code = {
-							["<leader>tp"] = "@function.outer",
-							["<leader>tP"] = "@class.outer",
-						},
-					},
-				},
 			})
 		end,
 	},
 })
 
--- General
 vim.o.wrap = true
 vim.o.hlsearch = false
 vim.o.number = true
@@ -300,4 +246,3 @@ vim.cmd [[tnoremap <Esc> <C-\><C-n>]]
 if vim.loop.os_uname().sysname == 'Windows' then
   vim.cmd [[set shell=powershell]]
 end
-
