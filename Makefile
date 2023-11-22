@@ -26,7 +26,6 @@ endif
 all: $(TERMCONFIG)/alacritty.yml $(GITCONFIG)/.gitconfig $(NVIMCONFIG)/init.lua $(SHELLCONFIG)
 
 $(TERMCONFIG)/alacritty.yml: alacritty.yml | $(TERMCONFIG)
-#	$(RM) $(TERMCONFIG)/alacritty.yml
 	$(CP) ./alacritty.yml $(TERMCONFIG)
 
 $(TERMCONFIG):
@@ -49,6 +48,8 @@ $(SHELLCONFIG): $(REMOTESHELLCONFIG)
 update:
 	rm  ./init.lua 
 	cp $(NVIMCONFIG)/init.lua ./init.lua
+	
+	install $(SHELLCONFIG) ./.bashrc
 
 clean:
 	$(RM) $(GITCONFIG)
