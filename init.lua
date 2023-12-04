@@ -26,13 +26,6 @@ require("lazy").setup({
 		config = function()
 			vim.cmd.colorscheme 'vscode'
 			vim.o.background = 'dark'
-			vim.keymap.set("n", "<leader>v", function() 
-				if vim.o.background == 'light' then
-					vim.o.background = 'dark'
-				else
-					vim.o.background = 'light'
-				end
-			end)
 		end,
 	},
 	{
@@ -40,7 +33,7 @@ require("lazy").setup({
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {
 		  options = {
-			icons_enabled = false,
+			icons_enabled = true,
 			component_separators = '|',
 			section_separators = '',
 			theme = 'vscode'
@@ -50,18 +43,14 @@ require("lazy").setup({
 	{
 		'stevearc/oil.nvim',
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			keymaps = {
-				["~"] = function()
-					require("oil.actions").tcd.callback()
-					require('harpoon.term').sendCommand(1,"cd ".. vim.fn.getcwd() .."\r")
-					require('harpoon.term').sendCommand(1,"")
-				end,
-			},
-		},
 		config = function(_,opts)
 			require("oil").setup(opts)
 			vim.keymap.set("n","<leader>e","<cmd>Oil<CR>")
+			vim.keymap.set("n", "<leader>c", function() 
+					require("oil.actions").tcd.callback()
+					require('harpoon.term').sendCommand(1,"cd ".. vim.fn.getcwd() .."\r")
+					require('harpoon.term').sendCommand(1,"")
+			end)
 		end,
 	},
 	{
@@ -98,12 +87,15 @@ require("lazy").setup({
 			vim.keymap.set("n","<leader>l","<cmd>Telescope lsp_document_symbols<CR>")
 		end,
 	},
+	{ 'lewis6991/gitsigns.nvim'},
 	{ 'numToStr/Comment.nvim', opts = {} },
 	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
+	{ 'tpope/vim-sleuth' },
 	{
 		'neovim/nvim-lspconfig', 
 		config = function()
 			local lspconfig = require('lspconfig')
+			lspconfig.gdscript.setup {}
 			local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 			local default_setup = function(server)
 				lspconfig[server].setup({
@@ -113,7 +105,9 @@ require("lazy").setup({
 			require('mason').setup({})
 			require('mason-lspconfig').setup({
 				 ensure_installed = {'gopls', 'tsserver', 'rust_analyzer','marksman'},
-				 handlers = {default_setup,}
+				 handlers = {
+					default_setup,
+				}
 			 })
 			vim.api.nvim_create_autocmd('LspAttach', {
 				callback = function(ev)
@@ -162,7 +156,7 @@ require("lazy").setup({
 					completeopt = 'menuone,noselect',
 				},
 				view = {            
-					entries = "native",
+					entries = "wildmenu",
 				},
 				sources = {
 					{name = 'nvim_lsp'},
@@ -230,6 +224,7 @@ vim.keymap.set("n","<C-u>", "<C-u>zz")
 vim.keymap.set('n','gp','`[v`]') -- select last modification
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set('t','<Esc>', '<C-\\><C-n>')
 
 -- Highlight yank/copy
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -240,9 +235,3 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
-
--- Terminal settings
-vim.cmd [[tnoremap <Esc> <C-\><C-n>]]
-if vim.loop.os_uname().sysname == 'Windows' then
-  vim.cmd [[set shell=powershell]]
-end
