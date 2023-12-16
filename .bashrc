@@ -115,12 +115,15 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-. "$HOME/.cargo/env"
 
 alias g='git'
-alias python='python3'
+alias p='.local/venv/bin/python'
 alias fd='fdfind'
 alias s='sudo'
 alias sd='sudo docker'
+
+export EDITOR=nvim
 export PATH=$PATH:~/go/bin:~/.local/bin
-alias mvim='NVIM_APPNAME=mvim nvim'
+export AWS_PROFILE=localstack
+
+set -o vi
