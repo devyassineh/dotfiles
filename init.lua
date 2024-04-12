@@ -1,4 +1,6 @@
-vim.g.mapleader = ' ' vim.g.maplocalleader = ' ' vim.o.timeoutlen = 1000
+vim.g.mapleader = ' ' 
+vim.g.maplocalleader = ' ' 
+vim.o.timeoutlen = 1000
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
@@ -17,13 +19,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	{
-		'stevearc/oil.nvim',
-		config = function(_,opts)
-			require("oil").setup(opts)
-			vim.keymap.set("n","<leader>e","<cmd>Oil<CR>")
-		end,
-	},
+	{ 'rose-pine/neovim', name = 'rose-pine' },
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.3',
 		dependencies = {
@@ -35,21 +31,31 @@ require("lazy").setup({
 			vim.keymap.set("n","<leader>?", "<cmd>Telescope oldfiles<CR>")
 			vim.keymap.set("n","<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<CR>")
 			vim.keymap.set("n","<leader>f","<cmd>Telescope find_files<CR>")
+			vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
+			vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 		end,
 	},
 	{ 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
 	{ 'tpope/vim-sleuth' },
 	{
 		'williamboman/mason.nvim',
+		dependencies = {
+			'williamboman/mason-lspconfig.nvim',
+		},
 		config = function()
-			require('mason').setup()
+			require("mason").setup()
+			require("mason-lspconfig").setup()
+			require("mason-lspconfig").setup_handlers {
+				function (server_name)
+					require("lspconfig")[server_name].setup {}
+				end,
+			}
 		end
 	},
 	{
 		'neovim/nvim-lspconfig', 
 		config = function()
 			local lspconfig = require('lspconfig')
-			local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 			local custom_attach = function(client, bufnr)
 				print('Lsp Attached.')
 				local opts = { buffer = bufnr }
@@ -60,6 +66,8 @@ require("lazy").setup({
 				vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
 				vim.keymap.set("n","<leader>l","<cmd>Telescope lsp_document_symbols<CR>")
 				vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+				vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
+				vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 			end
 			local servers = {'clangd','pyright','bashls','rust_analyzer','tsserver','gopls'}
 			for _, lsp in ipairs(servers) do
@@ -69,56 +77,6 @@ require("lazy").setup({
 				}
 			end
 		end,
-	},
-	{	
-	       'hrsh7th/nvim-cmp',
-	       dependencies = {
-	       	'hrsh7th/cmp-buffer',
-	       	'hrsh7th/cmp-nvim-lsp',
-	       	'hrsh7th/cmp-nvim-lsp-signature-help',
-	       },
-	       config = function()
-	       	local cmp = require('cmp')
-	       	cmp.setup({
-	       		snippet = {
-	       			expand = function(args)
-	       				vim.snippet.expand(args.body)
-	       			end
-	       		},
-	       		preselect = cmp.PreselectMode.None, -- for golang 
-	       		view = {entries = "native",},
-	       		sources = {
-	       			{name = 'nvim_lsp'},
-	       			{name = 'nvim_lsp_signature_help'},
-	       			{name = 'buffer'},
-	       		},
-	       		mapping = cmp.mapping.preset.insert({
-	       			['<C-Space>'] = cmp.mapping.complete {},
-	       			['<CR>'] = cmp.mapping.confirm({
-	       				behavior = cmp.ConfirmBehavior.Replace,
-	       				select = true,
-	       			}),
-	       			['<Tab>'] = cmp.mapping(function(fallback)
-	       				if cmp.visible() then
-	       					cmp.select_next_item()
-	       				elseif vim.snippet.jumpable(1) then
-	       					vim.snippet.jump(1)
-	       				else
-	       					fallback()
-	       				end
-	       			end,{'i','s'}),
-	       			['<S-Tab>'] = cmp.mapping(function(fallback)
-	       				if cmp.visible() then
-	       					cmp.select_prev_item()
-	       				elseif vim.snippet.jumpable(1) then
-	       					vim.snippet.jump(-1)
-	       				else
-	       					fallback()
-	       				end
-	       			end,{'i','s'}),
-	       		})
-	       	})
-	       end,
 	},
 	{
 		'nvim-treesitter/nvim-treesitter',
@@ -134,7 +92,7 @@ require("lazy").setup({
 	},
 })
 
-vim.o.completeopt = 'menuone,noselect' 
+vim.cmd[[colorscheme rose-pine]]
 vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -151,7 +109,6 @@ vim.o.relativenumber = true
 vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.api.nvim_set_hl(0, "WinSeparator", {fg='NvimDarkGrey2'})
-vim.keymap.set('n', '<leader>t', '<cmd>:term<CR>')
 vim.keymap.set('t','<Esc>', '<C-\\><C-n>')
 vim.keymap.set('n', '<leader>w', '<C-W>') -- window movement: <leader>w instead of <C-w>
 vim.keymap.set("n","<C-d>", "<C-d>zz") -- better scrolling
